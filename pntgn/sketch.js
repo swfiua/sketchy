@@ -14,7 +14,6 @@
 //
 
 
-let Y
 //
 let b;
 let OV;
@@ -38,6 +37,7 @@ let SourceOverlay
 
 function preload() {
 
+    console.log('preloading')
   Sampleimg = loadImage("SampleImg.png");
   //
   //upload img
@@ -59,22 +59,25 @@ function setup() {
   bSCREEN=10
   MaxNum=400
   let c=0
-  let SourceOverlay=0
-  let Y=0
+  call2()
 }
 
 function draw() {
   background(220);
-  image(Sampleimg,20,20);
-  Sampleimg.resize(0,250);
+    //ellipse(mouseX, mouseY, 50, 50, fill=(255,0,0))
+    //return
   //image(img,20,20);
-    if (img) {
+  if (img) {
       push();
       AdjustImg(img.width,img.height);
       pop()
       //image(img,20,20);
     //Sampleimg.remove()
-  } 
+  } else {
+      image(Sampleimg,20,20);
+      Sampleimg.resize(0,250);
+  }
+    
   fill(fillVal);
   rect(25, 25, 50, 50);
   fill(ResVal);
@@ -111,6 +114,8 @@ function draw() {
 
 }  
 function keyPressed() {
+
+    //httpGet("./key?key=" + keyCode)
   if (keyCode === UP_ARROW) {
     fillVal = get(mouseX,mouseY);
     INDEXBASE = color(fillVal);
@@ -122,23 +127,20 @@ function keyPressed() {
     console.log("SHADED VAL", ResVal)
    
   } else if (keyCode === ENTER){
- r1=round(255*ResR/BR); 
+  r1=round(255*ResR/BR); 
   g1=round(255*ResG/BG);
   b1=round(255*ResB/BB);
 
     console.log("Multiply VAL",r1,g1,b1 )
   } else if  (keyCode === TAB){
-    
-    console.log(round(overlay(BR, ResR, r1)));
-    //r1=F
-    console.log("Overlay VAL",r1 )
-    console.log(round(overlay(BG, ResG, Y)));
-    //g1=F
-    console.log("Overlay VAL",g1)
-    console.log(round(overlay(BB, ResB)));
-    //b1=F
-    console.log("Overlay VAL",r1,g1,b1 )
-    //ERROR NaN
+
+    r1 = overlay(BR, ResR)
+
+    g1 = overlay(BG, ResG)
+
+    b1 = overlay(BB, ResB)
+
+    console.log("Overlay VAL", r1, g1, b1)
   }
     
 //   }else if (keyCode === TAB)
@@ -180,23 +182,45 @@ image(img, 0, 0, (adjW/adjH)*MaxNum, MaxNum);
         image(img,0,0, MaxNum, MaxNum)
       }
 }
-function overlay(b, OV, Y){
+function overlay(b, OV){
   //formulae for calculating overlay value
   //overlay is typically used to make a given are lighter
+  let Y  
   if (b>127.5 ){
-    v=(255-b)/127.5
-    minV=b-(255-b)
-   let SourceOverlay= (OV-minV)/v
-   let Y = round(SourceOverlay,0)
-    console.log(SourceOverlay)
-    console.log(F)
-    
+      v=(255-b)/127.5
+      minV=b-(255-b)
+      let SourceOverlay= (OV-minV)/v
+      Y = round(SourceOverlay,0)
+      console.log(Y)
+      console.log(SourceOverlay)
+      //console.log(F)
   } else if (b<127.5){
-    v=b/127.5
-   let SourceOverlay=OV/v
-   let Y = round(SourceOverlay,0)
-    console.log(SourceOverlay)
-    console.log(F)
+      v=b/127.5
+      let SourceOverlay=OV/v
+      Y = round(SourceOverlay,0)
+      console.log(SourceOverlay)
+      //console.log(F)
   }
+    
+  return Y
 }
 
+function call1(a, b, c){
+
+    c = a + b
+
+    return c
+}
+
+function call2() {
+
+    let d = 10
+    let e = 20
+    let f = 5
+    
+    let g = call1(d, e, f)
+
+    console.log('g', g)
+    console.log('f', f)
+    console.log('d', d)
+}
