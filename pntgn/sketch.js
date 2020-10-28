@@ -19,190 +19,164 @@ let b;
 let OV;
 //let UPPER_LAYER;
 let c;
-let adjW;
-let adjH;
-let MaxNum;
-let input;
+let MaxNum=400;
 let img;
 let Sampleimg
 //let base;
-let fillVal;
-let ResVal;
-let ResR, ResB, ResG;
 let BR, BB, BG;
 let r1, b1, g1;
-let rSCREEN,gSCREEN,bSCREEN;
-let SourceOverlay
 
 
 function preload() {
 
     console.log('preloading')
-  Sampleimg = loadImage("SampleImg.png");
-  //
-  //upload img
-  input = createFileInput(handleFile);
-  input.position(0, 0);
+    Sampleimg = loadImage("SampleImg.png");
+    //
+    //upload img
+    input = createFileInput(handleFile);
+    input.position(0, 0);
 }
 function setup() {
-  createCanvas(400, 400);
-  fillVal = 200;
-  INDEXBASE = color(fillVal);
-  MKJ = 100;
-  INDEXRES = color(MKJ);
-  ResVal = 0
-  r1=100
-  g1=100
-  b1=100
-  rSCREEN=10
-  gSCREEN=10
-  bSCREEN=10
-  MaxNum=400
-  let c=0
-  call2()
+    createCanvas(MaxNum, MaxNum);
+    INDEXBASE = color(200);
+    INDEXRES = color(100);
 }
 
 function draw() {
-  background(220);
+    background(220);
     //ellipse(mouseX, mouseY, 50, 50, fill=(255,0,0))
     //return
-  //image(img,20,20);
-  if (img) {
-      push();
-      AdjustImg(img.width,img.height);
-      pop()
-      //image(img,20,20);
-    //Sampleimg.remove()
-  } else {
-      image(Sampleimg,20,20);
-      Sampleimg.resize(0,250);
-  }
+    //image(img,20,20);
+    if (img) {
+        push();
+        AdjustImg(img.width,img.height);
+        pop()
+        //image(img,20,20);
+        //Sampleimg.remove()
+    } else {
+        image(Sampleimg,20,20);
+        Sampleimg.resize(0,250);
+    }
     
-  fill(fillVal);
-  rect(25, 25, 50, 50);
-  fill(ResVal);
-  rect(25, 100, 50, 50);
-  //
-  BR=red(INDEXBASE);
-  BG=green(INDEXBASE);
-  BB=blue(INDEXBASE);
-  //D
-  ResR=red(INDEXRES);
-  ResG=green(INDEXRES);
-  ResB=blue(INDEXRES);
-//CALC
-  fill(r1,g1,b1,255);
-  rect(25, 200, 50, 50);
-  // fill(rSCREEN,gSCREEN,bSCREEN,255);
-  // rect(25, 300, 50, 50);
-  push()
-  //TEST BOX
-  noStroke();
-  fill(BR,BG,BB,255);
-  rect(295, 190, 40, 40);
-  blendMode(MULTIPLY);
-  fill(r1,g1,b1,255);
-  rect(305, 200, 20, 20)
-  pop()
+    fill(INDEXBASE);
+    rect(25, 25, 50, 50);
+    fill(INDEXRES);
+    rect(25, 100, 50, 50);
 
-  push()
-  fill(0)
-  text("PRESS UP ARROW to get BASE COLOR", 0, 360)
-  text("PRESS DOWN ARROW to get SHADED COLOR", 0, 375)
-  text("PRESS ENTER to get ESTIMATED MULTIPLY COLOR", 0, 390)
-  pop()
+    //CALC
+    fill(multiply(INDEXRES, INDEXBASE));
+    rect(25, 200, 50, 50);
+    // fill(rSCREEN,gSCREEN,bSCREEN,255);
+    // rect(25, 300, 50, 50);
+    push()
+    //TEST BOX
+    noStroke();
+    fill(INDEXBASE);
+    rect(295, 190, 40, 40);
+    blendMode(MULTIPLY);
+    fill(INDEXRES);
+    rect(305, 200, 20, 20)
+    pop()
 
-}  
+    push()
+    fill(0)
+    text("PRESS UP ARROW to get BASE COLOR", 0, 360)
+    text("PRESS DOWN ARROW to get SHADED COLOR", 0, 375)
+    text("PRESS ENTER to get ESTIMATED MULTIPLY COLOR", 0, 390)
+    pop()
+
+}
+
+function get_color() {
+    // return colur at current mouse position
+    pixel = get(mouseX, mouseY)
+
+    console.log(pixel)
+    return color(pixel)
+}
+
+function multiply(a, b) {
+    result = []
+
+    for (x=0; x<3; x++) {
+        result.push(255 * a.levels[x] / b.levels[x])
+    }
+    return result
+}
+
 function keyPressed() {
 
     //httpGet("./key?key=" + keyCode)
-  if (keyCode === UP_ARROW) {
-    fillVal = get(mouseX,mouseY);
-    INDEXBASE = color(fillVal);
-    console.log("Base Color VAL", fillVal)
+    if (keyCode === UP_ARROW) {
+        INDEXBASE = get_color()
+        console.log("Base Color VAL", INDEXBASE.levels)
 
-  } else if (keyCode === DOWN_ARROW) {
-    ResVal = get(mouseX,mouseY);
-    INDEXRES = color(ResVal);
-    console.log("SHADED VAL", ResVal)
-   
-  } else if (keyCode === ENTER){
-  r1=round(255*ResR/BR); 
-  g1=round(255*ResG/BG);
-  b1=round(255*ResB/BB);
+    } else if (keyCode === DOWN_ARROW) {
+        INDEXRES = get_color()
+        console.log("SHADED VAL", INDEXRES.levels)
+        
+    } else if (keyCode === ENTER){
 
-    console.log("Multiply VAL",r1,g1,b1 )
-  } else if  (keyCode === TAB){
+        combi = multiply(INDEXRES, INDEXBASE)
+        console.log("Multiply VAL", combi )
 
-    r1 = overlay(BR, ResR)
+    } else if  (keyCode === TAB){
 
-    g1 = overlay(BG, ResG)
+        result = overlay(INDEXRES, INDEXBASE)
 
-    b1 = overlay(BB, ResB)
-
-    console.log("Overlay VAL", r1, g1, b1)
-  }
+        console.log("Overlay VAL", result)
+    }
     
-//   }else if (keyCode === TAB)
-//       if ( BB === 1 || BR===1||BG===1)        {console.log("Null")
-// } else {
-//   //a is base
-//   rSCREEN=abs(((ResR/255)-(BR/255)/(1-(BR/255))))
-//   gSCREEN = abs(((ResG/255)-(BG/255)/(1-(BG/255))))
-//   bSCREEN=abs(((ResB/255)-(BB/255)/(1-(BB/255))))
-//   console.log("screen is", rSCREEN,gSCREEN,bSCREEN)
-    
-    
-
-    
-    
-  
-//   return false; // prevent default
- 
 }
 
 //CREATE FILE
 function handleFile(file) {
- // print(file);
-  if (file.type === 'image') {
-    img = createImg(file.data, '');
-    img.hide();
-  } else {
-    img = null;
-  }
+    // print(file);
+    if (file.type === 'image') {
+        img = createImg(file.data, '');
+        img.hide();
+    } else {
+        img = null;
+    }
 }
 function AdjustImg(adjW,adjH){
-  //adjW=WIDTH
-  //adjH=HEIGHT
-  if (adjW>adjH){
-image(img, 0, 0, MaxNum, (adjH/adjW)*MaxNum);
-      } else if (adjW< adjH){
-image(img, 0, 0, (adjW/adjH)*MaxNum, MaxNum);
-      } else if (adjW=== adjH){
+    //adjW=WIDTH
+    //adjH=HEIGHT
+    //console.log(MaxNum)
+    if (adjW>adjH){
+        image(img, 0, 0, MaxNum, (adjH/adjW)*MaxNum);
+    } else if (adjW< adjH){
+        image(img, 0, 0, (adjW/adjH)*MaxNum, MaxNum);
+    } else if (adjW=== adjH){
         image(img,0,0, MaxNum, MaxNum)
-      }
+    }
 }
-function overlay(b, OV){
-  //formulae for calculating overlay value
-  //overlay is typically used to make a given are lighter
-  let Y  
-  if (b>127.5 ){
-      v=(255-b)/127.5
-      minV=b-(255-b)
-      let SourceOverlay= (OV-minV)/v
-      Y = round(SourceOverlay,0)
-      console.log(Y)
-      console.log(SourceOverlay)
-      //console.log(F)
-  } else if (b<127.5){
-      v=b/127.5
-      let SourceOverlay=OV/v
-      Y = round(SourceOverlay,0)
-      console.log(SourceOverlay)
-      //console.log(F)
-  }
-    
-  return Y
+function overlay(res, base){
+    //formulae for calculating overlay value
+    //overlay is typically used to make a given are lighter
+    console.log('calculating overlay', res)
+    result = []
+    for (x=0; x<3; x++) {
+        b = res.levels[x]
+        OV = base.levels[x]
+        if (b>127.5 ){
+            v=(255-b)/127.5
+            minV=b-(255-b)
+            SourceOverlay= (OV-minV)/v
+            value = round(SourceOverlay,0)
+            console.log(value)
+            console.log(SourceOverlay)
+            //console.log(F)
+        } else if (b<127.5){
+            v=b/127.5
+            SourceOverlay=OV/v
+            value = round(SourceOverlay,0)
+            console.log(value)
+            //console.log(F)
+        }
+        result.push(value)
+    }
+    return result
 }
 
 function call1(a, b, c){
