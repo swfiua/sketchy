@@ -13,18 +13,10 @@
 //calculate other formulae(see formulae.js)
 //
 
-
-//
-let b;
-let OV;
-//let UPPER_LAYER;
-let c;
+/* */
 let MaxNum=400;
 let img;
 let Sampleimg
-//let base;
-let BR, BB, BG;
-let r1, b1, g1;
 
 
 function preload() {
@@ -48,9 +40,9 @@ function draw() {
     //return
     //image(img,20,20);
     if (img) {
-        push();
+        //push();
         AdjustImg(img.width,img.height);
-        pop()
+        //pop()
         //image(img,20,20);
         //Sampleimg.remove()
     } else {
@@ -96,6 +88,7 @@ function get_color() {
 }
 
 function multiply(a, b) {
+    // looks more like divide than multiply 
     result = []
 
     for (x=0; x<3; x++) {
@@ -151,16 +144,21 @@ function AdjustImg(adjW,adjH){
         image(img,0,0, MaxNum, MaxNum)
     }
 }
+
+
 function overlay(res, base){
     //formulae for calculating overlay value
     //overlay is typically used to make a given are lighter
     console.log('calculating overlay', res)
     result = []
-    for (x=0; x<3; x++) {
-        b = res.levels[x]
-        OV = base.levels[x]
+    console.log(typeof red)
+    for (cc of [red, green, blue]) {
+        b = cc(res)
+        OV = cc(base)
         if (b>127.5 ){
             v=(255-b)/127.5
+
+            // fixme: this looks like i broke it
             minV=b-(255-b)
             SourceOverlay= (OV-minV)/v
             value = round(SourceOverlay,0)
