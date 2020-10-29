@@ -1,9 +1,9 @@
 ///TO DO
 
-//TO FIX: FILE upload box appears when custom image loaded and enter is pressed
-//TO SOLVE: Storing overlay result values 
+//TO FIX: FILE upload box appears when custom image loaded and enter is pressed - focus issue?
+//TO SOLVE: Storing overlay result values: j5s has a store function.
 
-//if base color is lighter than Result value, the modifying layer can't be darken, multiply, etc. print NO if this is the case
+//if base color is lighter than Result value, the modifying layer can't be darker, multiply, etc. print NO if this is the case
 // if base color is darker than Result value, the modifying layer can't be a lightening modifier ie. overlay, hard light, etc print NO if this is the case
 
 // next steps:
@@ -87,12 +87,12 @@ function get_color() {
     return color(pixel)
 }
 
-function multiply(a, b) {
-    // looks more like divide than multiply 
+function multiply(base, res) {
+    // looks more like divide than multiply, solves for the multiplier
     result = []
 
     for (x=0; x<3; x++) {
-        result.push(255 * a.levels[x] / b.levels[x])
+        result.push(255 * res.levels[x] / base.levels[x])
     }
     return result
 }
@@ -110,12 +110,12 @@ function keyPressed() {
         
     } else if (keyCode === ENTER){
 
-        combi = multiply(INDEXRES, INDEXBASE)
+        combi = multiply(INDEXBASE, INDEXRES)
         console.log("Multiply VAL", combi )
 
     } else if  (keyCode === TAB){
 
-        result = overlay(INDEXRES, INDEXBASE)
+        result = overlay(INDEXBASE, INDEXRES)
 
         console.log("Overlay VAL", result)
     }
@@ -146,7 +146,7 @@ function AdjustImg(adjW,adjH){
 }
 
 
-function overlay(res, base){
+function overlay(base, res){
     //formulae for calculating overlay value
     //overlay is typically used to make a given are lighter
     console.log('calculating overlay', res)
