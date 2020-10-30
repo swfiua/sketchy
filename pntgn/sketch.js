@@ -14,9 +14,10 @@
 //
 
 /* */
-let MaxNum=400;
+let MaxNum=600;
 let img;
-let Sampleimg
+let Sampleimg;
+let Mask;
 
 
 function preload() {
@@ -60,6 +61,12 @@ function draw() {
     rect(25, 200, 50, 50);
     // fill(rSCREEN,gSCREEN,bSCREEN,255);
     // rect(25, 300, 50, 50);
+
+
+    if (Mask) {
+        image(Mask, 300, 0)
+    }
+    
     push()
     //TEST BOX
     noStroke();
@@ -79,33 +86,15 @@ function draw() {
 
 }
 
-function get_color() {
-    // return colur at current mouse position
-    pixel = get(mouseX, mouseY)
-
-    console.log(pixel)
-    return color(pixel)
-}
-
-function multiply(base, res) {
-    // looks more like divide than multiply, solves for the multiplier
-    result = []
-
-    for (x=0; x<3; x++) {
-        result.push(255 * res.levels[x] / base.levels[x])
-    }
-    return result
-}
-
 function keyPressed() {
 
     //httpGet("./key?key=" + keyCode)
     if (keyCode === UP_ARROW) {
-        INDEXBASE = get_color()
+        INDEXBASE = color(get(mouseX, mouseY))
         console.log("Base Color VAL", INDEXBASE.levels)
 
     } else if (keyCode === DOWN_ARROW) {
-        INDEXRES = get_color()
+        INDEXRES = color(get(mouseX, mouseY))
         console.log("SHADED VAL", INDEXRES.levels)
         
     } else if (keyCode === ENTER){
@@ -118,9 +107,39 @@ function keyPressed() {
         result = overlay(INDEXBASE, INDEXRES)
 
         console.log("Overlay VAL", result)
+
+        Mask = could_be(Sampleimg, INDEXRES)
     }
     
 }
+
+function could_be(img, res) {
+
+    mask = createImage(img.width, img.height)
+
+    mask.loadPixels()
+    for (i=0; i < mask.width; i++) {
+        for (j=0; j < mask.height; j++) {
+            result = i_could_be_overlay(img.get(i, j), res)
+            xx = []
+            for (col of result) {
+                if (col) {
+                    value = 255
+                } else {
+                    value = 0
+                }
+                xx.push(value)
+            }
+            mask.set(i, j, color(xx))
+        }
+    }
+
+    mask.updatePixels()
+    console.log(mask)
+
+    return mask
+}
+    
 
 //CREATE FILE
 function handleFile(file) {
@@ -132,6 +151,7 @@ function handleFile(file) {
         img = null;
     }
 }
+
 function AdjustImg(adjW,adjH){
     //adjW=WIDTH
     //adjH=HEIGHT
@@ -146,23 +166,61 @@ function AdjustImg(adjW,adjH){
 }
 
 
-function overlay(base, res){
-    //formulae for calculating overlay value
-    //overlay is typically used to make a given are lighter
-    console.log('calculating overlay', res)
+function apply(fn, base, res){
+    // apply a function to the red, green and blue of base and res
     result = []
-    console.log(typeof red)
     for (cc of [red, green, blue]) {
 
-        value = inverse_overlay(cc(base), cc(res))
+        value = fn(cc(base), cc(res))
 
         result.push(value)
     }
     return result
 }
 
-function inverse_overlay(base, res) {
-    // returns the overlay required to turn base into res
+
+function overlay(base, res){
+    //formulae for calculating overlay value
+    //overlay is typically used to make a given are lighter
+
+    console.log(base.levels, res.levels,
+                'could be overlay?', i_could_be_overlay(base, res))
+
+    console.log('calculating overlay', res)
+    return apply(ioverlay, base, res)
+}
+
+
+function multiply(base, res) {
+    // looks more like divide than multiply, solves for the multiplier
+    return apply(imultiply, base, res)
+}
+
+function imultiply(base, res) {
+
+    return 255 * res / base
+}
+
+
+function i_could_be_overlay(base, res) {
+    return apply(could_be_overlay, base, res)
+}
+
+
+function could_be_overlay(base, res) {
+
+    if (base > 127.5) {
+        return res > base
+    } else {
+        return res < base
+    }
+}
+
+function ioverlay(base, res) {
+    /* returns the overlay required to turn base into res
+       
+     */
+
     b = base
     OV = res
     
@@ -171,7 +229,7 @@ function inverse_overlay(base, res) {
 
         value = 255 - (255-res)/v
 
-        //minV=b-(255-b) // ??
+        //minV=b-(255-b) // 
         //value = (OV-minV)/v
     } else if (b<127.5){
         v=b/127.5
