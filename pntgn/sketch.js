@@ -153,28 +153,34 @@ function overlay(base, res){
     result = []
     console.log(typeof red)
     for (cc of [red, green, blue]) {
-        b = cc(res)
-        OV = cc(base)
-        if (b>127.5 ){
-            v=(255-b)/127.5
 
-            // fixme: this looks like i broke it
-            minV=b-(255-b)
-            SourceOverlay= (OV-minV)/v
-            value = round(SourceOverlay,0)
-            console.log(value)
-            console.log(SourceOverlay)
-            //console.log(F)
-        } else if (b<127.5){
-            v=b/127.5
-            SourceOverlay=OV/v
-            value = round(SourceOverlay,0)
-            console.log(value)
-            //console.log(F)
-        }
+        value = inverse_overlay(cc(base), cc(res))
+
         result.push(value)
     }
     return result
+}
+
+function inverse_overlay(base, res) {
+    // returns the overlay required to turn base into res
+    b = base
+    OV = res
+    
+    if (b>127.5 ){
+        v=(255-b)/127.5
+
+        value = 255 - (255-res)/v
+
+        //minV=b-(255-b) // ??
+        //value = (OV-minV)/v
+    } else if (b<127.5){
+        v=b/127.5
+        value = OV/v
+        if (value > 255) {
+            console.log('impossible value', value)
+        }
+    }
+    return round(value, 0)
 }
 
 function call1(a, b, c){
