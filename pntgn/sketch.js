@@ -114,6 +114,8 @@ function keyPressed() {
 }
 
 function could_be(img, res) {
+    // take an image and pick out where it is possible to
+    // apply an overlay to get res
 
     mask = createImage(img.width, img.height)
 
@@ -139,7 +141,7 @@ function could_be(img, res) {
 
     return mask
 }
-    
+
 
 //CREATE FILE
 function handleFile(file) {
