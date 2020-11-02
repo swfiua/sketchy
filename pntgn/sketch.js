@@ -64,6 +64,7 @@ function draw() {
 
 
     if (Mask) {
+        console.log('drawing mask')
         image(Mask, 300, 0)
     }
     
@@ -108,7 +109,12 @@ function keyPressed() {
 
         console.log("Overlay VAL", result)
 
-        Mask = could_be(Sampleimg, INDEXRES)
+        if (img) { 
+            cimg = img
+        } else {
+            cimg = Sampleimg
+        }
+        Mask = could_be(cimg, INDEXRES)
     }
     
 }
@@ -118,7 +124,7 @@ function could_be(img, res) {
     // apply an overlay to get res
 
     mask = createImage(img.width, img.height)
-
+    console.log(typeof img)
     mask.loadPixels()
     for (i=0; i < mask.width; i++) {
         for (j=0; j < mask.height; j++) {
@@ -148,6 +154,7 @@ function handleFile(file) {
     // print(file);
     if (file.type === 'image') {
         img = createImg(file.data, '');
+        img.loadPixels()
         img.hide();
     } else {
         img = null;
@@ -159,10 +166,13 @@ function AdjustImg(adjW,adjH){
     //adjH=HEIGHT
     //console.log(MaxNum)
     if (adjW>adjH){
+        console.log('width greater than height')
         image(img, 0, 0, MaxNum, (adjH/adjW)*MaxNum);
     } else if (adjW< adjH){
+        console.log('width less than height')
         image(img, 0, 0, (adjW/adjH)*MaxNum, MaxNum);
     } else if (adjW=== adjH){
+        console.log('width equals height')
         image(img,0,0, MaxNum, MaxNum)
     }
 }
