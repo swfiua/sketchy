@@ -33,6 +33,7 @@ function setup() {
     createCanvas(MaxNum, MaxNum);
     INDEXBASE = color(200);
     INDEXRES = color(100);
+    Mask = could_be(Sampleimg, INDEXRES)
 }
 
 function draw() {
@@ -63,10 +64,8 @@ function draw() {
     // rect(25, 300, 50, 50);
 
 
-    if (Mask) {
-        console.log('drawing mask')
-        image(Mask, 300, 0)
-    }
+    console.log('drawing mask')
+    image(Mask, 300, 0)
     
     push()
     //TEST BOX
@@ -84,6 +83,8 @@ function draw() {
     text("PRESS DOWN ARROW to get SHADED COLOR", 0, 375)
     text("PRESS ENTER to get ESTIMATED MULTIPLY COLOR", 0, 390)
     pop()
+
+    noLoop()
 
 }
 
@@ -115,6 +116,8 @@ function keyPressed() {
             cimg = Sampleimg
         }
         Mask = could_be(cimg, INDEXRES)
+
+        draw()
     }
     
 }
@@ -128,7 +131,7 @@ function could_be(img, res) {
     mask.loadPixels()
     for (i=0; i < mask.width; i++) {
         for (j=0; j < mask.height; j++) {
-            result = i_could_be_overlay(img.get(i, j), res)
+            result = could_be_overlay(img.get(i, j), res)
             xx = []
             for (col of result) {
                 if (col) {
@@ -196,7 +199,7 @@ function overlay(base, res){
     //overlay is typically used to make a given are lighter
 
     console.log(base.levels, res.levels,
-                'could be overlay?', i_could_be_overlay(base, res))
+                'could be overlay?', could_be_overlay(base, res))
 
     console.log('calculating overlay', res)
     return apply(ioverlay, base, res)
@@ -204,22 +207,22 @@ function overlay(base, res){
 
 
 function multiply(base, res) {
-    // looks more like divide than multiply, solves for the multiplier
     return apply(imultiply, base, res)
 }
 
 function imultiply(base, res) {
+    // a divide not a multiply, solves for the multiplier
 
     return 255 * res / base
 }
 
 
-function i_could_be_overlay(base, res) {
-    return apply(could_be_overlay, base, res)
+function could_be_overlay(base, res) {
+    return apply(i_could_be_overlay, base, res)
 }
 
 
-function could_be_overlay(base, res) {
+function i_could_be_overlay(base, res) {
 
     if (base > 127.5) {
         return res > base
@@ -260,7 +263,7 @@ function call1(a, b, c){
     return c
 }
 
-function call2() {
+function debug() {
 
     let d = 10
     let e = 20
