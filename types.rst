@@ -45,8 +45,9 @@ Pictures and postcards in semi-transparent post boxes.
 But with images and waves, we have dictionaries and lists and the rest
 is meta data.
 
-News just in, there are pipelines and switches too.  You might need a
-*magic.Roundabout*.
+News just in, there are pipelines and switches too.
+
+You might need a *magic.Roundabout*.
 
 How's it magic?
 
@@ -55,5 +56,18 @@ until the exceptions go away.
 
 Time passes, then one day someone asks, how's it working?
 
-Oh its working just fine, but it won't do anything useful, unless you
-give it the right input data, I assumed you already had that.
+Oh, its working just fine but it won't do anything useful with the
+data yoy keep passing it.
+
+How do you mean, won't do anything useful?
+
+Well, whatever data you send, it just throws a few exceptions and
+goes silent.
+
+The developer swears it works, says go check the spec, it does exactly
+what is asked, it isn't my fault you don't speak its language.
+
+
+
+
+
