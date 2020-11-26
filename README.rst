@@ -165,6 +165,9 @@ e6892d1 index.html wrapper
 
 Just that, get something that works in my browser.
 
+Why am I runing this in a browser?   I guess something like *node*
+might be handy, but for now just wrap it in `html`.
+
 
 0ffd43c initial colour magic
 ============================
